@@ -1,0 +1,20 @@
+{% extends 'basic.html' %}
+{% block title %}Edit Blog Post{% endblock %}
+
+{% block body %}
+{% if user.is_authenticated and user.id == post.auther.id %}
+<div class="container mt-5">
+  <h1 class="mb-4">Edit Blog Post</h1>
+
+  <form method="POST">
+    {% csrf_token %}
+ 
+    	{{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Update</button>
+  </form>
+</div>
+{% else %}
+
+please login first to edit post
+{%endif %}
+{% endblock %}

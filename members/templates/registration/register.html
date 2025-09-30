@@ -1,0 +1,16 @@
+{% extends 'basic.html' %}
+{% block title %}Resgister{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+  <h1 class="mb-4">Register</h1>
+
+  <form method="POST">
+    {% csrf_token %}
+   
+    	{{ form.as_p }}
+
+    <button type="submit" class="btn btn-primary">Register</button>
+  </form>
+</div>
+{% endblock %}

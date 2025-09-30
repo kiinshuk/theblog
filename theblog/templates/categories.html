@@ -1,0 +1,22 @@
+{% extends 'basic.html' %}
+{% block title %} {{ cats }} {% endblock %}
+
+{% block body %}
+  <h1>Posts in {{ cats }}</h1>
+
+  {% for post in category_posts %}
+    <div class="card mb-3">
+      <div class="card-body">
+        <h2>
+          <a href="{% url 'article-detail' post.pk %}">
+            {{ post.title }}
+          </a>
+        </h2>
+        <p><small>By {{ post.auther }} on {{ post.post_date }}</small></p>
+        <p>{{ post.body|truncatechars:200 }}</p>
+      </div>
+    </div>
+  {% empty %}
+    <p>No posts found in this category.</p>
+  {% endfor %}
+{% endblock %}

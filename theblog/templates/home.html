@@ -1,0 +1,20 @@
+{% extends 'basic.html' %}
+{%block title %} Theblog {% endblock %}
+
+{% block body %}
+<h1>Post</h1>
+<!-- {{ cat_menu }} -->
+<ul>
+{% for post in object_list %}
+	<li><a href="{% url 'article-detail' post.pk%}">{{ post.title }}</a> - {{ post.auther }} - {{ post.post_date }} <small>
+
+		{% if user.is_authenticated and user.id == post.auther.id %}
+		- <a href="{% url 'update_post' post.pk %}">(Edit)</a>
+		<a href="{% url 'delete_post' post.pk %}">(Delete)</a>
+		{% endif %}
+	</small><br/>
+	{{ post.body| slice:":200"| linebreaks }}</li>
+{% endfor %}
+</ul>
+
+{% endblock %}
