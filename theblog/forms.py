@@ -11,13 +11,13 @@ from .models import Post, Category
 class PostForm(forms.ModelForm):
 	class Meta:
 		model = Post
-		fields = ('title','category' , 'body')
+		fields = ('title','category', 'snippet' , 'body', 'header_image')
 
 		widgets = {
 		'title': forms.TextInput(attrs={'class': 'from-control' }),
 		# 'auther': forms.Select(attrs={'class': 'from-control'}),
 		'category': forms.Select(attrs={'class': 'from-control'}),
 		'body': forms.Textarea(attrs={'class': 'from-control'}),
-
+		'snippet': forms.TextInput(attrs={'class': 'from-control'}),
 		}
 

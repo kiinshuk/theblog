@@ -1,40 +1,498 @@
 {% extends 'basic.html' %}
-{%block title %} {{ post.title }} Edit {% endblock %}
+{% load static %}
+{% block title %}{{ post.title }} - TheBlog{% endblock %}
 
 {% block body %}
-<!-- Current user: {{user.id}} -->
-<h1>{{ post.title }}</h1>
-<small>By: {{ post.auther }}</small> - <small>{{post.post_date}}</small> <br/>
-<small> Category: {{ post.category }}</small>
-<hr>
-<br/>
-  {{ post.body|linebreaks }}
-<br/>
-<br/>
+<div class="container">
+    <!-- Navigation -->
+    <div class="mb-4">
+        <a href="{% url 'home' %}" class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-arrow-left me-2"></i>Back to Stories
+        </a>
+    </div>
 
-<a href="{%url 'home'%}"><button type="button" class="btn btn-dark">Back</button></a>
-{% if user.is_authenticated and user.id == post.auther.id %}
-<a href="{%url 'update_post' post.pk %}"><button type="button" class="btn btn-dark">
-Edit</button></a>
-<a href="{% url 'delete_post' post.pk %}" method="POST"><button type="button" class="btn btn-dark">
-Delete</button></a>
+    <!-- Article Card -->
+    <article class="card mb-4">
+        <!-- Article Header Image -->
+        {% if post.header_image %}
+        <img src="{{ post.header_image.url }}" class="article-hero-image" alt="{{ post.title }}">
+        {% endif %}
+        
+        <div class="card-body">
+            <!-- Article Header -->
+            <div class="article-header mb-4">
+                <!-- Category -->
+                {% if post.category %}
+                <div class="category-badge mb-3">
+                    <span class="badge">
+                        <i class="bi bi-tag me-1"></i>{{ post.category }}
+                    </span>
+                </div>
+                {% endif %}
 
-{% endif %}
+                <!-- Title -->
+                <h1 class="article-title">{{ post.title }}</h1>
 
-<br/><br/>
-<form action="{% url 'like_post' post.pk %}" method='POST'>
-{% csrf_token %}
-{%if user.is_authenticated %}
-{% if liked %}
-<button type="submit", name='post_id', value="{{ post.id }}" class='btn btn-primary btn-sm' >Unlike</button>
+                <!-- Author and Meta Info -->
+                <div class="author-section mb-4">
+                    <div class="d-flex align-items-center">
+                        <!-- Author Avatar -->
+                        <div class="author-avatar me-3">
+                            {% if post.auther.profile.profile_pic %}
+                            <img src="{{ post.auther.profile.profile_pic.url }}" class="rounded-circle" 
+                                 alt="{{ post.auther.username }}">
+                            {% else %}
+                            <div class="rounded-circle default-avatar">
+                                <i class="bi bi-person"></i>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Author Info -->
+                        <div class="author-info flex-grow-1">
+                            <div class="d-flex align-items-center flex-wrap">
+                                <h6 class="author-name mb-0 me-2">
+                                    <a href="{% url 'members:show_profile' post.auther.profile.id %}" class="text-decoration-none">
+                                        {{ post.auther.get_full_name|default:post.auther.username }}
+                                    </a>
+                                </h6>
+                                <small class="text-muted me-2">@{{ post.auther.username }}</small>
+                                <span class="text-muted">•</span>
+                                <small class="text-muted ms-2">{{ post.post_date|date:"F j, Y" }}</small>
+                            </div>
+                            <div class="reading-time mt-1">
+                                <small class="text-muted">
+                                    <i class="bi bi-clock me-1"></i>{{ post.post_date|timesince }} ago
+                                </small>
+                            </div>
+                        </div>
 
-{% else %}
+                        <!-- Action Buttons -->
+                        {% if user.is_authenticated and user.id == post.auther.id %}
+                        <div class="article-actions">
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'update_post' post.pk %}">
+                                            <i class="bi bi-pencil me-2"></i>Edit Story
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item text-danger" href="{% url 'delete_post' post.pk %}" 
+                                           onclick="return confirm('Are you sure you want to delete this story?')">
+                                            <i class="bi bi-trash me-2"></i>Delete Story
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
 
-<button type="submit", name='post_id', value="{{ post.id }}" class='btn btn-primary btn-sm' >Like</button> 
-{% endif %}
-{% else %}
-<a href="{% url 'login' %}">Login</a> to like posts
-{% endif %}
-- {{ total_likes }} Likes 
-</form>
+            <!-- Article Content -->
+            <div class="article-content">
+                {{ post.body|safe }}
+            </div>
+
+            <!-- Article Footer -->
+            <div class="article-footer mt-5 pt-4 border-top">
+                <!-- Like Section -->
+                <div class="like-section text-center py-3">
+                    <form action="{% url 'like_post' post.pk %}" method="POST" class="d-inline-block">
+                        {% csrf_token %}
+                        {% if user.is_authenticated %}
+                            {% if liked %}
+                            <button type="submit" name="post_id" value="{{ post.id }}" class="btn btn-like liked">
+                                <i class="bi bi-heart-fill"></i>
+                                <span>Liked</span>
+                            </button>
+                            {% else %}
+                            <button type="submit" name="post_id" value="{{ post.id }}" class="btn btn-like">
+                                <i class="bi bi-heart"></i>
+                                <span>Like this story</span>
+                            </button>
+                            {% endif %}
+                        {% else %}
+                            <a href="{% url 'login' %}" class="btn btn-like">
+                                <i class="bi bi-heart"></i>
+                                <span>Login to Like</span>
+                            </a>
+                        {% endif %}
+                        
+                        <div class="like-count mt-2">
+                            <span class="text-muted fw-semibold">{{ total_likes }} appreciation{{ total_likes|pluralize }}</span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <!-- Author Profile Card -->
+    <div class="card author-profile-card mb-4">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <!-- Author Avatar -->
+                <div class="col-md-3 text-center mb-3 mb-md-0">
+                    <div class="profile-avatar-container">
+                        {% if post.auther.profile.profile_pic %}
+                        <img src="{{ post.auther.profile.profile_pic.url }}" 
+                             class="profile-avatar" 
+                             alt="{{ post.auther }}'s profile picture">
+                        {% else %}
+                        <div class="profile-avatar default">
+                            <i class="bi bi-person"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Author Information -->
+                <div class="col-md-9">
+                    <div class="author-details">
+                        <h4 class="author-name mb-2">
+                            <a href="{% url 'members:show_profile' post.auther.profile.id %}" class="text-decoration-none">
+                                {{ post.auther.get_full_name|default:post.auther.username }}
+                            </a>
+                        </h4>
+                        <small class="text-muted d-block mb-3">@{{ post.auther.username }}</small>
+                        
+                        <!-- Bio -->
+                        {% if post.auther.profile.bio %}
+                        <p class="author-bio text-muted mb-3">
+                            {{ post.auther.profile.bio }}
+                        </p>
+                        {% endif %}
+
+                        <!-- Social Links & Actions -->
+                        <div class="author-actions">
+                            <div class="d-flex flex-wrap align-items-center gap-3">
+                                <a href="{% url 'members:show_profile' post.auther.profile.id %}" class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-person me-1"></i>View Profile
+                                </a>
+                                
+                                {% if post.auther.profile.website_url or post.auther.profile.facebook_url or post.auther.profile.twitter_url or post.auther.profile.instagram_url %}
+                                <div class="social-links">
+                                    {% if post.auther.profile.website_url %}
+                                    <a href="{{ post.auther.profile.website_url }}" target="_blank" class="social-link" title="Website">
+                                        <i class="bi bi-globe"></i>
+                                    </a>
+                                    {% endif %}
+                                    
+                                    {% if post.auther.profile.facebook_url %}
+                                    <a href="{{ post.auther.profile.facebook_url }}" target="_blank" class="social-link" title="Facebook">
+                                        <i class="bi bi-facebook"></i>
+                                    </a>
+                                    {% endif %}
+                                    
+                                    {% if post.auther.profile.twitter_url %}
+                                    <a href="{{ post.auther.profile.twitter_url }}" target="_blank" class="social-link" title="Twitter">
+                                        <i class="bi bi-twitter"></i>
+                                    </a>
+                                    {% endif %}
+                                    
+                                    {% if post.auther.profile.instagram_url %}
+                                    <a href="{{ post.auther.profile.instagram_url }}" target="_blank" class="social-link" title="Instagram">
+                                        <i class="bi bi-instagram"></i>
+                                    </a>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- More from Author Section -->
+    <div class="mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="mb-0">More from this author</h5>
+            <a href="{% url 'members:show_profile' post.auther.profile.id %}" class="btn btn-outline-primary btn-sm">
+                View All Stories
+            </a>
+        </div>
+        <!-- You can add recent posts by same author here -->
+        <div class="text-center py-4">
+            <p class="text-muted">Explore more stories by {{ post.auther.username }}</p>
+            <a href="{% url 'members:show_profile' post.auther.profile.id %}" class="btn btn-primary">
+                Visit Author Profile
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Article Card */
+.article-card {
+    border: 2px solid #9c27b0;
+    border-radius: 15px;
+    background: white;
+    box-shadow: 5px 5px 0 #ffc107;
+    transition: all 0.2s ease;
+    overflow: hidden;
+}
+
+.article-card:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 8px 8px 0 #4caf50;
+}
+
+.article-hero-image {
+    width: 100%;
+    max-height: 500px;
+    object-fit: cover;
+}
+
+/* Article Header */
+.article-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    line-height: 1.2;
+    color: #1a1a1a;
+    margin-bottom: 1rem;
+}
+
+.category-badge .badge {
+    background: linear-gradient(45deg, #2196f3, #9c27b0);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    border: 2px solid white;
+    box-shadow: 2px 2px 0 #ffc107;
+}
+
+/* Author Section */
+.author-avatar img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border: 3px solid #f8f9fa;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+}
+
+.default-avatar {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(45deg, #2196f3, #9c27b0);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    border: 3px solid #f8f9fa;
+}
+
+.author-name {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #1a1a1a;
+}
+
+.author-name a:hover {
+    color: #2196f3 !important;
+}
+
+/* Article Content */
+.article-content {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #1a1a1a;
+    font-weight: 600;
+}
+
+.article-content p {
+    margin-bottom: 1.5rem;
+}
+
+.article-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    margin: 2rem 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: 2px solid #ffc107;
+}
+
+.article-content h1, .article-content h2, .article-content h3, .article-content h4 {
+    color: #1a1a1a;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    font-weight: 800;
+}
+
+.article-content blockquote {
+    border-left: 4px solid #2196f3;
+    padding-left: 1.5rem;
+    margin: 2rem 0;
+    font-style: italic;
+    color: #374151;
+    background: linear-gradient(135deg, #ffc107, #ffeb3b);
+    padding: 1rem;
+    border-radius: 8px;
+    border: 2px dashed #2196f3;
+}
+
+/* Like Button */
+.btn-like {
+    background: linear-gradient(45deg, #2196f3, #9c27b0);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 0.75rem 2rem;
+    font-weight: 700;
+    transition: all 0.2s ease;
+    border: 2px solid white;
+    box-shadow: 3px 3px 0 #ffc107;
+}
+
+.btn-like:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0 #4caf50;
+    color: white;
+}
+
+.btn-like.liked {
+    background: linear-gradient(45deg, #e91e63, #ff5722);
+}
+
+.like-count {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #374151;
+}
+
+/* Author Profile Card */
+.author-profile-card {
+    border: 2px solid #9c27b0;
+    border-radius: 15px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    box-shadow: 5px 5px 0 #ffc107;
+}
+
+.profile-avatar {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.profile-avatar.default {
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(45deg, #2196f3, #9c27b0);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 2rem;
+    border: 3px solid white;
+}
+
+.author-details .author-name {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #1a1a1a;
+}
+
+.author-bio {
+    line-height: 1.6;
+    font-size: 1rem;
+    color: #374151;
+    font-weight: 600;
+}
+
+/* Social Links */
+.social-links {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.social-link {
+    width: 35px;
+    height: 35px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #2196f3;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 2px solid #ffc107;
+    font-size: 0.9rem;
+}
+
+.social-link:hover {
+    transform: translateY(-2px);
+    color: white;
+    background: linear-gradient(45deg, #2196f3, #9c27b0);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .article-title {
+        font-size: 1.8rem;
+    }
+    
+    .article-hero-image {
+        max-height: 300px;
+    }
+    
+    .author-avatar img,
+    .default-avatar {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .profile-avatar,
+    .profile-avatar.default {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .author-details .author-name {
+        font-size: 1.2rem;
+    }
+    
+    .article-content {
+        font-size: 1rem;
+    }
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card {
+    animation: fadeInUp 0.4s ease;
+}
+</style>
+
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
 {% endblock %}

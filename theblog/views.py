@@ -85,7 +85,7 @@ class AddCategoryView(CreateView):
 class UpdatePostView(UpdateView):
     model = Post
     template_name = 'update_post.html'
-    fields = ['title', 'body']
+    fields = ['title', 'snippet' ,'body']
 
 
 class DeletePostView(DeleteView):

@@ -2,7 +2,7 @@
 {% block title %}Delete Post{% endblock %}
 
 {% block body %}
-{%if user.is_authenticated and user.auther.id %}
+{%if user.is_authenticated and user.id == post.auther.id %}
 <div class="container mt-5">
   <h1 class="mb-4">Delete Post</h1>
   <h3>{{ post.title }}</h3>
@@ -17,5 +17,5 @@
 {% else %}
 
 please login first to edit post
-{%endif %}
+{% endif %}
 {% endblock %}
