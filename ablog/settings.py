@@ -16,7 +16,7 @@ DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 # For ALLOWED_HOSTS - simple approach
 ALLOWED_HOSTS = []
 if not DEBUG:
-    ALLOWED_HOSTS = ['.onrender.com', 'localhost', '127.0.0.1']
+    ALLOWED_HOSTS = ['theblog-oa94.onrender.com','.onrender.com', 'localhost', '127.0.0.1']
 else:
     ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
