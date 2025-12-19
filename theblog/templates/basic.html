@@ -199,9 +199,11 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li>
-                                <a class="dropdown-item" href="{% url 'members:edit_profile_page' user.profile.id %}">
-                                    <i class="bi bi-pencil me-2"></i>Edit Profile
-                                </a>
+                                {% if user.profile %}
+    <a class="dropdown-item" href="{% url 'members:edit_profile_page' user.profile.id %}">
+{% else %}
+    <a class="dropdown-item" href="{% url 'members:create_profile' %}">
+{% endif %}
                             </li>
                             <li>
                                 <a class="dropdown-item" href="{% url 'members:edit_settings' %}">
