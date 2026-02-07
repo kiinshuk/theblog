@@ -12,65 +12,69 @@
     </div>
 
     <!-- Article Card -->
-    <article class="card mb-4">
+    <article class="card article-card mb-4">
         <!-- Article Header Image -->
         {% if post.header_image %}
-        <img src="{{ post.header_image.url }}" class="article-hero-image" alt="{{ post.title }}">
+        <img src="{{ post.header_image.url }}" class="article-hero-img card-img-top" alt="{{ post.title }}">
         {% endif %}
         
-        <div class="card-body">
+        <div class="card-body p-4">
             <!-- Article Header -->
             <div class="article-header mb-4">
                 <!-- Category -->
                 {% if post.category %}
                 <div class="category-badge mb-3">
-                    <span class="badge">
+                    <span class="badge bg-primary text-white px-3 py-2 rounded-pill">
                         <i class="bi bi-tag me-1"></i>{{ post.category }}
                     </span>
                 </div>
                 {% endif %}
 
                 <!-- Title -->
-                <h1 class="article-title">{{ post.title }}</h1>
+                <h1 class="article-title fw-bold mb-4">{{ post.title }}</h1>
 
                 <!-- Author and Meta Info -->
                 <div class="author-section mb-4">
-                    <div class="d-flex align-items-center">
-                        <!-- Author Avatar -->
-                        <div class="author-avatar me-3">
-                            {% if post.auther.profile and post.auther.profile.profile_pic %}
-                            <img src="{{ post.auther.profile.profile_pic.url }}" class="rounded-circle" 
-                                 alt="{{ post.auther.username }}">
-                            {% else %}
-                            <div class="rounded-circle default-avatar">
-                                <i class="bi bi-person"></i>
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center">
+                            <!-- Author Avatar -->
+                            <div class="author-avatar me-3">
+                                {% if post.auther.profile and post.auther.profile.profile_pic %}
+                                <img src="{{ post.auther.profile.profile_pic.url }}" class="rounded-circle author-img" 
+                                     alt="{{ post.auther.username }}">
+                                {% else %}
+                                <div class="rounded-circle default-avatar d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-person fs-4"></i>
+                                </div>
+                                {% endif %}
                             </div>
-                            {% endif %}
-                        </div>
-                        
-                        <!-- Author Info -->
-                        <div class="author-info flex-grow-1">
-                            <div class="d-flex align-items-center flex-wrap">
-                                <h6 class="author-name mb-0 me-2">
-                                    {% if post.auther.profile and post.auther.profile.id %}
-                                    <a href="{% url 'members:show_profile' post.auther.profile.id %}" 
-                                       class="text-decoration-none text-dark">
-                                        {{ post.auther.get_full_name|default:post.auther.username }}
-                                    </a>
-                                    {% else %}
-                                    <span class="text-dark">
-                                        {{ post.auther.get_full_name|default:post.auther.username }}
-                                    </span>
-                                    {% endif %}
-                                </h6>
-                                <small class="text-muted me-2">@{{ post.auther.username }}</small>
-                                <span class="text-muted">•</span>
-                                <small class="text-muted ms-2">{{ post.post_date|date:"F j, Y" }}</small>
-                            </div>
-                            <div class="reading-time mt-1">
-                                <small class="text-muted">
-                                    <i class="bi bi-clock me-1"></i>{{ post.post_date|timesince }} ago
-                                </small>
+                            
+                            <!-- Author Info -->
+                            <div class="author-info">
+                                <div class="d-flex align-items-center flex-wrap mb-1">
+                                    <h6 class="author-name mb-0 me-2 fw-semibold">
+                                        {% if post.auther.profile and post.auther.profile.id %}
+                                        <a href="{% url 'members:show_profile' post.auther.profile.id %}" 
+                                           class="text-decoration-none text-dark">
+                                            {{ post.auther.get_full_name|default:post.auther.username }}
+                                        </a>
+                                        {% else %}
+                                        <span class="text-dark">
+                                            {{ post.auther.get_full_name|default:post.auther.username }}
+                                        </span>
+                                        {% endif %}
+                                    </h6>
+                                    <small class="text-muted me-2">@{{ post.auther.username }}</small>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <small class="text-muted">
+                                        <i class="bi bi-calendar me-1"></i>{{ post.post_date|date:"F j, Y" }}
+                                    </small>
+                                    <span class="mx-2">•</span>
+                                    <small class="text-muted">
+                                        <i class="bi bi-clock me-1"></i>{{ post.post_date|timesince }} ago
+                                    </small>
+                                </div>
                             </div>
                         </div>
 
@@ -78,15 +82,16 @@
                         {% if user.is_authenticated and user.id == post.auther.id %}
                         <div class="article-actions">
                             <div class="dropdown">
-                                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="dropdown">
+                                <button class="btn btn-sm btn-light border" type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots"></i>
                                 </button>
-                                <ul class="dropdown-menu">
+                                <ul class="dropdown-menu dropdown-menu-end">
                                     <li>
                                         <a class="dropdown-item" href="{% url 'update_post' post.pk %}">
                                             <i class="bi bi-pencil me-2"></i>Edit Story
                                         </a>
                                     </li>
+                                    <li><hr class="dropdown-divider"></li>
                                     <li>
                                         <a class="dropdown-item text-danger" href="{% url 'delete_post' post.pk %}" 
                                            onclick="return confirm('Are you sure you want to delete this story?')">
@@ -114,25 +119,22 @@
                         {% csrf_token %}
                         {% if user.is_authenticated %}
                             {% if liked %}
-                            <button type="submit" name="post_id" value="{{ post.id }}" class="btn btn-like liked">
-                                <i class="bi bi-heart-fill"></i>
-                                <span>Liked</span>
+                            <button type="submit" name="post_id" value="{{ post.id }}" class="btn btn-like btn-danger px-4 py-2">
+                                <i class="bi bi-heart-fill me-2"></i>Liked
                             </button>
                             {% else %}
-                            <button type="submit" name="post_id" value="{{ post.id }}" class="btn btn-like">
-                                <i class="bi bi-heart"></i>
-                                <span>Like this story</span>
+                            <button type="submit" name="post_id" value="{{ post.id }}" class="btn btn-like btn-outline-danger px-4 py-2">
+                                <i class="bi bi-heart me-2"></i>Like this story
                             </button>
                             {% endif %}
                         {% else %}
-                            <a href="{% url 'login' %}" class="btn btn-like">
-                                <i class="bi bi-heart"></i>
-                                <span>Login to Like</span>
+                            <a href="{% url 'login' %}" class="btn btn-outline-primary px-4 py-2">
+                                <i class="bi bi-heart me-2"></i>Login to Like
                             </a>
                         {% endif %}
                         
                         <div class="like-count mt-2">
-                            <span class="text-muted fw-semibold">{{ total_likes }} appreciation{{ total_likes|pluralize }}</span>
+                            <span class="text-muted fw-semibold fs-6">{{ total_likes }} like{{ total_likes|pluralize }}</span>
                         </div>
                     </form>
                 </div>
@@ -142,18 +144,18 @@
 
     <!-- Author Profile Card -->
     <div class="card author-profile-card mb-4">
-        <div class="card-body">
+        <div class="card-body p-4">
             <div class="row align-items-center">
                 <!-- Author Avatar -->
                 <div class="col-md-3 text-center mb-3 mb-md-0">
                     <div class="profile-avatar-container">
                         {% if post.auther.profile and post.auther.profile.profile_pic %}
                         <img src="{{ post.auther.profile.profile_pic.url }}" 
-                             class="profile-avatar" 
+                             class="profile-avatar-img rounded-circle" 
                              alt="{{ post.auther }}'s profile picture">
                         {% else %}
-                        <div class="profile-avatar default">
-                            <i class="bi bi-person"></i>
+                        <div class="profile-avatar-img rounded-circle default-profile-avatar d-flex align-items-center justify-content-center mx-auto">
+                            <i class="bi bi-person fs-1"></i>
                         </div>
                         {% endif %}
                     </div>
@@ -162,9 +164,9 @@
                 <!-- Author Information -->
                 <div class="col-md-9">
                     <div class="author-details">
-                        <h4 class="author-name mb-2">
+                        <h4 class="author-name mb-2 fw-bold">
                             {% if post.auther.profile and post.auther.profile.id %}
-                            <a href="{% url 'members:show_profile' post.auther.profile.id %}" class="text-decoration-none">
+                            <a href="{% url 'members:show_profile' post.auther.profile.id %}" class="text-decoration-none text-dark">
                                 {{ post.auther.get_full_name|default:post.auther.username }}
                             </a>
                             {% else %}
@@ -178,7 +180,11 @@
                         <!-- Bio -->
                         {% if post.auther.profile and post.auther.profile.bio %}
                         <p class="author-bio text-muted mb-3">
-                            {{ post.auther.profile.bio }}
+                            {{ post.auther.profile.bio|truncatechars:200 }}
+                        </p>
+                        {% else %}
+                        <p class="author-bio text-muted mb-3 fst-italic">
+                            This author hasn't written a bio yet.
                         </p>
                         {% endif %}
 
@@ -186,33 +192,33 @@
                         <div class="author-actions">
                             <div class="d-flex flex-wrap align-items-center gap-3">
                                 {% if post.auther.profile and post.auther.profile.id %}
-                                <a href="{% url 'members:show_profile' post.auther.profile.id %}" class="btn btn-outline-primary btn-sm">
+                                <a href="{% url 'members:show_profile' post.auther.profile.id %}" class="btn btn-primary btn-sm px-3">
                                     <i class="bi bi-person me-1"></i>View Profile
                                 </a>
                                 {% endif %}
                                 
                                 {% if post.auther.profile %}
-                                <div class="social-links">
+                                <div class="social-links d-flex gap-2">
                                     {% if post.auther.profile.website_url %}
-                                    <a href="{{ post.auther.profile.website_url }}" target="_blank" class="social-link" title="Website">
+                                    <a href="{{ post.auther.profile.website_url }}" target="_blank" class="social-link btn btn-outline-secondary btn-sm" title="Website">
                                         <i class="bi bi-globe"></i>
                                     </a>
                                     {% endif %}
                                     
                                     {% if post.auther.profile.facebook_url %}
-                                    <a href="{{ post.auther.profile.facebook_url }}" target="_blank" class="social-link" title="Facebook">
+                                    <a href="{{ post.auther.profile.facebook_url }}" target="_blank" class="social-link btn btn-outline-primary btn-sm" title="Facebook">
                                         <i class="bi bi-facebook"></i>
                                     </a>
                                     {% endif %}
                                     
                                     {% if post.auther.profile.twitter_url %}
-                                    <a href="{{ post.auther.profile.twitter_url }}" target="_blank" class="social-link" title="Twitter">
+                                    <a href="{{ post.auther.profile.twitter_url }}" target="_blank" class="social-link btn btn-outline-info btn-sm" title="Twitter">
                                         <i class="bi bi-twitter"></i>
                                     </a>
                                     {% endif %}
                                     
                                     {% if post.auther.profile.instagram_url %}
-                                    <a href="{{ post.auther.profile.instagram_url }}" target="_blank" class="social-link" title="Instagram">
+                                    <a href="{{ post.auther.profile.instagram_url }}" target="_blank" class="social-link btn btn-outline-danger btn-sm" title="Instagram">
                                         <i class="bi bi-instagram"></i>
                                     </a>
                                     {% endif %}
@@ -227,279 +233,360 @@
     </div>
 
     <!-- More from Author Section -->
-    <div class="mt-4">
+    {% if post.auther.profile and post.auther.profile.id %}
+    <div class="more-from-author mt-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h5 class="mb-0">More from this author</h5>
-            {% if post.auther.profile and post.auther.profile.id %}
+            <h5 class="mb-0 fw-bold">More from this author</h5>
             <a href="{% url 'members:show_profile' post.auther.profile.id %}" class="btn btn-outline-primary btn-sm">
                 View All Stories
             </a>
-            {% endif %}
         </div>
-        <!-- You can add recent posts by same author here -->
-        <div class="text-center py-4">
-            <p class="text-muted">Explore more stories by {{ post.auther.username }}</p>
-            {% if post.auther.profile and post.auther.profile.id %}
-            <a href="{% url 'members:show_profile' post.auther.profile.id %}" class="btn btn-primary">
-                Visit Author Profile
-            </a>
-            {% else %}
-            <span class="btn btn-secondary" style="cursor: default;">
-                Profile Not Available
-            </span>
-            {% endif %}
+        
+        <!-- Add author's recent posts here if available -->
+        <div class="card">
+            <div class="card-body text-center py-5">
+                <div class="mb-3">
+                    <i class="bi bi-journal-text display-4 text-muted"></i>
+                </div>
+                <p class="text-muted mb-3">Explore more stories by {{ post.auther.username }}</p>
+                <a href="{% url 'members:show_profile' post.auther.profile.id %}" class="btn btn-primary px-4">
+                    Visit Author Profile
+                </a>
+            </div>
         </div>
     </div>
+    {% endif %}
 </div>
 
 <style>
+/* Main Container */
+.container {
+    max-width: 900px;
+}
+
 /* Article Card */
 .article-card {
-    border: 2px solid #9c27b0;
-    border-radius: 15px;
-    background: white;
-    box-shadow: 5px 5px 0 #ffc107;
-    transition: all 0.2s ease;
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     overflow: hidden;
+    background: #fff;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .article-card:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: 8px 8px 0 #4caf50;
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
 }
 
-.article-hero-image {
+/* Article Hero Image */
+.article-hero-img {
     width: 100%;
-    max-height: 500px;
+    height: 400px;
     object-fit: cover;
+    border-radius: 0;
 }
 
-/* Article Header */
+/* Article Title */
 .article-title {
-    font-size: 2.2rem;
+    font-size: 2.5rem;
     font-weight: 800;
-    line-height: 1.2;
+    line-height: 1.3;
     color: #1a1a1a;
-    margin-bottom: 1rem;
-}
-
-.category-badge .badge {
-    background: linear-gradient(45deg, #2196f3, #9c27b0);
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 700;
-    border: 2px solid white;
-    box-shadow: 2px 2px 0 #ffc107;
+    margin-bottom: 1.5rem;
 }
 
 /* Author Section */
-.author-avatar img {
-    width: 60px;
-    height: 60px;
+.author-img {
+    width: 50px;
+    height: 50px;
     object-fit: cover;
-    border: 3px solid #f8f9fa;
-    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .default-avatar {
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(45deg, #2196f3, #9c27b0);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    font-size: 1.5rem;
-    border: 3px solid #f8f9fa;
-}
-
-.author-name {
-    font-weight: 700;
-    font-size: 1.1rem;
-    color: #1a1a1a;
+    font-size: 1.2rem;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .author-name a:hover {
-    color: #2196f3 !important;
+    color: #667eea !important;
 }
 
 /* Article Content */
 .article-content {
     font-size: 1.1rem;
     line-height: 1.8;
-    color: #1a1a1a;
-    font-weight: 600;
+    color: #374151;
+    font-weight: 400;
 }
 
 .article-content p {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.8rem;
 }
 
 .article-content img {
     max-width: 100%;
     height: auto;
-    border-radius: 12px;
+    border-radius: 10px;
     margin: 2rem 0;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    border: 2px solid #ffc107;
 }
 
-.article-content h1, .article-content h2, .article-content h3, .article-content h4 {
+.article-content h1,
+.article-content h2,
+.article-content h3,
+.article-content h4 {
     color: #1a1a1a;
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-    font-weight: 800;
+    margin-top: 2.5rem;
+    margin-bottom: 1.2rem;
+    font-weight: 700;
 }
+
+.article-content h1 { font-size: 2.2rem; }
+.article-content h2 { font-size: 1.8rem; }
+.article-content h3 { font-size: 1.5rem; }
+.article-content h4 { font-size: 1.3rem; }
 
 .article-content blockquote {
-    border-left: 4px solid #2196f3;
+    border-left: 4px solid #667eea;
     padding-left: 1.5rem;
-    margin: 2rem 0;
+    margin: 2.5rem 0;
     font-style: italic;
-    color: #374151;
-    background: linear-gradient(135deg, #ffc107, #ffeb3b);
-    padding: 1rem;
+    color: #4b5563;
+    background: #f8fafc;
+    padding: 1.5rem;
     border-radius: 8px;
-    border: 2px dashed #2196f3;
+}
+
+.article-content ul,
+.article-content ol {
+    padding-left: 2rem;
+    margin-bottom: 1.8rem;
+}
+
+.article-content li {
+    margin-bottom: 0.5rem;
+}
+
+.article-content code {
+    background: #f3f4f6;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+}
+
+.article-content pre {
+    background: #1e293b;
+    color: #e2e8f0;
+    padding: 1.5rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 2rem 0;
 }
 
 /* Like Button */
 .btn-like {
-    background: linear-gradient(45deg, #2196f3, #9c27b0);
-    color: white;
-    border: none;
     border-radius: 25px;
-    padding: 0.75rem 2rem;
-    font-weight: 700;
-    transition: all 0.2s ease;
-    border: 2px solid white;
-    box-shadow: 3px 3px 0 #ffc107;
+    font-weight: 600;
+    transition: all 0.3s ease;
 }
 
 .btn-like:hover {
-    transform: translate(-1px, -1px);
-    box-shadow: 4px 4px 0 #4caf50;
-    color: white;
-}
-
-.btn-like.liked {
-    background: linear-gradient(45deg, #e91e63, #ff5722);
-}
-
-.like-count {
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: #374151;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 /* Author Profile Card */
 .author-profile-card {
-    border: 2px solid #9c27b0;
-    border-radius: 15px;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    box-shadow: 5px 5px 0 #ffc107;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
-.profile-avatar {
-    width: 100px;
-    height: 100px;
+.profile-avatar-img {
+    width: 120px;
+    height: 120px;
     object-fit: cover;
-    border-radius: 50%;
-    border: 3px solid white;
+    border: 4px solid white;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
-.profile-avatar.default {
-    width: 100px;
-    height: 100px;
-    background: linear-gradient(45deg, #2196f3, #9c27b0);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.default-profile-avatar {
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    font-size: 2rem;
-    border: 3px solid white;
+    font-size: 2.5rem;
+    border: 4px solid white;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .author-details .author-name {
-    font-size: 1.3rem;
-    font-weight: 800;
+    font-size: 1.5rem;
+    font-weight: 700;
     color: #1a1a1a;
 }
 
+.author-details .author-name a:hover {
+    color: #667eea !important;
+}
+
 .author-bio {
-    line-height: 1.6;
+    line-height: 1.7;
     font-size: 1rem;
-    color: #374151;
-    font-weight: 600;
+    color: #4b5563;
 }
 
 /* Social Links */
-.social-links {
-    display: flex;
-    gap: 0.75rem;
-}
-
-.social-link {
-    width: 35px;
-    height: 35px;
-    background: white;
+.social-links .btn {
     border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #2196f3;
-    text-decoration: none;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    border: 2px solid #ffc107;
-    font-size: 0.9rem;
+    transition: all 0.3s ease;
 }
 
-.social-link:hover {
-    transform: translateY(-2px);
-    color: white;
-    background: linear-gradient(45deg, #2196f3, #9c27b0);
+.social-links .btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* More from Author Section */
+.more-from-author .card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    background: #fff;
+}
+
+/* Reading Time */
+.reading-time {
+    font-size: 0.9rem;
+    color: #6b7280;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
+    .container {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
     .article-title {
         font-size: 1.8rem;
     }
     
-    .article-hero-image {
-        max-height: 300px;
-    }
-    
-    .author-avatar img,
-    .default-avatar {
-        width: 50px;
-        height: 50px;
-    }
-    
-    .profile-avatar,
-    .profile-avatar.default {
-        width: 80px;
-        height: 80px;
-    }
-    
-    .author-details .author-name {
-        font-size: 1.2rem;
+    .article-hero-img {
+        height: 250px;
     }
     
     .article-content {
         font-size: 1rem;
     }
+    
+    .article-content h1 { font-size: 1.8rem; }
+    .article-content h2 { font-size: 1.5rem; }
+    .article-content h3 { font-size: 1.3rem; }
+    .article-content h4 { font-size: 1.1rem; }
+    
+    .author-img,
+    .default-avatar {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+    
+    .profile-avatar-img,
+    .default-profile-avatar {
+        width: 80px;
+        height: 80px;
+        font-size: 1.8rem;
+    }
+    
+    .author-details .author-name {
+        font-size: 1.3rem;
+    }
+    
+    .author-section {
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+    
+    .article-actions {
+        margin-top: 1rem;
+        align-self: flex-end;
+    }
+    
+    .author-actions {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 1rem !important;
+    }
+    
+    .social-links {
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 576px) {
+    .article-title {
+        font-size: 1.5rem;
+    }
+    
+    .article-hero-img {
+        height: 200px;
+    }
+    
+    .card-body {
+        padding: 1.5rem !important;
+    }
+    
+    .btn-like {
+        width: 100%;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .article-card,
+    .author-profile-card,
+    .more-from-author .card {
+        background: #1f2937;
+        color: #e5e7eb;
+    }
+    
+    .article-title,
+    .author-details .author-name,
+    .article-content h1,
+    .article-content h2,
+    .article-content h3,
+    .article-content h4 {
+        color: #f9fafb;
+    }
+    
+    .article-content {
+        color: #d1d5db;
+    }
+    
+    .author-profile-card {
+        background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+    }
 }
 
 /* Animations */
-@keyframes fadeInUp {
+@keyframes fadeIn {
     from {
         opacity: 0;
         transform: translateY(20px);
@@ -510,12 +597,66 @@
     }
 }
 
-.card {
-    animation: fadeInUp 0.4s ease;
+.article-card,
+.author-profile-card,
+.more-from-author .card {
+    animation: fadeIn 0.6s ease-out;
+}
+
+/* Smooth scrolling for anchor links */
+.article-content a {
+    color: #667eea;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.article-content a:hover {
+    color: #764ba2;
+    border-bottom-color: #764ba2;
+}
+
+/* Code block styling */
+.article-content pre code {
+    background: none;
+    color: inherit;
+    padding: 0;
+    font-size: 0.9em;
+}
+
+/* Table styling */
+.article-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 2rem 0;
+}
+
+.article-content th,
+.article-content td {
+    padding: 0.75rem;
+    border: 1px solid #e5e7eb;
+    text-align: left;
+}
+
+.article-content th {
+    background: #f9fafb;
+    font-weight: 600;
+}
+
+/* Blockquote citation */
+.article-content blockquote footer {
+    margin-top: 0.5rem;
+    font-size: 0.9em;
+    color: #6b7280;
+    text-align: right;
 }
 </style>
 
 <!-- Bootstrap Icons -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+<!-- Optional: Add prism.js for code highlighting -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
 
 {% endblock %}
