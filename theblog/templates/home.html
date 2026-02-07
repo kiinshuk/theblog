@@ -38,9 +38,17 @@
                             <div class="flex-grow-1">
                                 <div class="d-flex align-items-center flex-wrap">
                                     <h6 class="mb-0 me-2">
-                                        <a href="{% url 'members:show_profile' post.auther.profile.id %}" class="text-decoration-none text-dark">
-                                            {{ post.auther.get_full_name|default:post.auther.username }}
-                                        </a>
+                                        <!-- FIXED: Added profile existence check -->
+                                        {% if post.auther.profile and post.auther.profile.id %}
+                                            <a href="{% url 'members:show_profile' post.auther.profile.id %}" 
+                                               class="text-decoration-none text-dark">
+                                                {{ post.auther.get_full_name|default:post.auther.username }}
+                                            </a>
+                                        {% else %}
+                                            <span class="text-dark">
+                                                {{ post.auther.get_full_name|default:post.auther.username }}
+                                            </span>
+                                        {% endif %}
                                     </h6>
                                     <!--  -->
                                 </div>
