@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
     <title>{% block title %}TheBlog - Share Your Stories{% endblock %}</title>
 
     <!-- Bootstrap 5 CSS -->
@@ -11,134 +11,517 @@
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 
+    <!-- Clean Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
-            color: #333;
-            line-height: 1.6;
-            min-height: 100vh;
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #64748b;
+            --accent-color: #3b82f6;
+            --light-gray: #f8fafc;
+            --medium-gray: #e2e8f0;
+            --dark-gray: #1e293b;
+            --border-radius: 8px;
+            --safe-area-top: env(safe-area-inset-top, 0);
+            --safe-area-bottom: env(safe-area-inset-bottom, 0);
         }
 
-        /* Simple Normal Navbar */
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #ffffff;
+            color: var(--dark-gray);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding-top: var(--safe-area-top);
+            padding-bottom: var(--safe-area-bottom);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Navbar - Mobile Optimized */
         .navbar {
-            background-color: #fff;
-            border-bottom: 1px solid #dee2e6;
+            background-color: white;
+            border-bottom: 1px solid var(--medium-gray);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
             padding: 0.5rem 0;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            min-height: 60px;
         }
 
         .navbar-brand {
-            font-weight: bold;
-            color: #007bff !important;
-            font-size: 1.3rem;
-            padding: 0;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--dark-gray) !important;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0;
         }
 
         .nav-link {
-            color: #495057 !important;
-            padding: 0.5rem 1rem !important;
-            font-size: 0.9rem;
-            border-radius: 4px;
-            margin: 0 2px;
+            color: var(--dark-gray) !important;
+            font-weight: 500;
+            padding: 0.75rem 1rem !important;
+            border-radius: var(--border-radius);
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+            margin: 0.125rem 0;
         }
 
         .nav-link:hover {
-            background-color: #e9ecef;
-            color: #007bff !important;
+            background-color: var(--light-gray);
+            color: var(--primary-color) !important;
         }
 
         .nav-link.active {
-            background-color: #007bff;
-            color: white !important;
+            color: var(--primary-color) !important;
+            font-weight: 600;
+            background-color: var(--light-gray);
         }
 
+        .navbar-toggler {
+            border: none;
+            padding: 0.5rem;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .navbar-toggler:focus {
+            box-shadow: none;
+            outline: none;
+        }
+
+        /* Dropdown - Mobile Friendly */
         .dropdown-menu {
-            background-color: white;
-            border: 1px solid #dee2e6;
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            font-size: 0.9rem;
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 0.5rem;
+            min-width: 200px;
+            margin-top: 0.5rem;
         }
 
         .dropdown-item {
-            padding: 0.5rem 1rem;
-            color: #495057;
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
         }
 
         .dropdown-item:hover {
-            background-color: #f8f9fa;
-            color: #007bff;
+            background-color: var(--light-gray);
+            color: var(--primary-color);
         }
 
+        /* User welcome */
         .user-welcome {
-            color: #495057;
-            font-weight: 500;
-        }
-
-        /* Main content area */
-        .main-content {
-            background-color: #f8f9fa;
-            flex: 1;
-            padding-top: 20px;
-        }
-
-        /* Footer */
-        .footer {
-            background-color: #f8f9fa;
-            border-top: 1px solid #dee2e6;
-            padding: 1rem 0;
-            font-size: 0.8rem;
-            color: #6c757d;
-        }
-
-        .footer a {
-            color: #6c757d;
-            text-decoration: none;
-            margin-right: 15px;
-        }
-
-        .footer a:hover {
-            text-decoration: underline;
-            color: #007bff;
-        }
-
-        /* Card styling */
-        .card {
-            border: 1px solid #dee2e6;
-            border-radius: 4px;
-            background: white;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            margin-bottom: 1rem;
-        }
-
-        .card-header {
-            background-color: #f8f9fa;
-            border-bottom: 1px solid #dee2e6;
             font-weight: 600;
-            padding: 0.75rem 1rem;
+            color: var(--dark-gray);
+            font-size: 0.95rem;
         }
 
-        /* Button styling */
-        .btn {
-            border-radius: 4px;
+        /* Main content - Mobile Optimized */
+        .main-content {
+            flex: 1;
+            background-color: var(--light-gray);
+            width: 100%;
+            padding: 0.5rem 0;
+        }
+
+        .container.main-container {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin: 0.5rem auto 1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--medium-gray);
+            width: 100%;
+            max-width: 100%;
+        }
+
+        /* Footer - Mobile Optimized */
+        .footer {
+            background-color: white;
+            border-top: 1px solid var(--medium-gray);
+            padding: 1rem 0;
+            color: var(--secondary-color);
             font-size: 0.9rem;
         }
 
-        /* Container styling */
-        .container {
-            padding: 0 15px;
+        .footer a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+            padding: 0.5rem;
+            display: inline-block;
+            min-height: 44px;
+            line-height: 44px;
         }
 
-        /* Responsive improvements */
-        @media (max-width: 768px) {
-            .navbar-brand {
-                font-size: 1.1rem;
+        .footer a:hover {
+            color: var(--primary-color);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        /* Buttons - Touch Friendly */
+        .btn {
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+            font-size: 0.95rem;
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            min-height: 36px;
+            font-size: 0.875rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover, .btn-primary:active {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline-primary {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-logout {
+            width: 100%;
+            text-align: left;
+            padding: 0.75rem 1rem;
+            border: none;
+            background: none;
+            color: var(--dark-gray);
+            font-weight: 500;
+            min-height: 44px;
+            font-size: 0.95rem;
+        }
+
+        .btn-logout:hover {
+            background-color: var(--light-gray);
+            color: #dc2626;
+        }
+
+        /* Cards - Mobile Optimized */
+        .card {
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--border-radius);
+            background-color: white;
+            transition: all 0.2s ease;
+            margin-bottom: 1rem;
+        }
+
+        .card:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08);
+        }
+
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid var(--medium-gray);
+            font-weight: 600;
+            color: var(--dark-gray);
+            padding: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .card-body {
+            padding: 1rem;
+        }
+
+        /* Alerts - Mobile Optimized */
+        .alert {
+            border-radius: var(--border-radius);
+            border: 1px solid transparent;
+            font-weight: 500;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .alert-success {
+            background-color: #f0fdf4;
+            border-color: #bbf7d0;
+            color: #166534;
+        }
+
+        .alert-info {
+            background-color: #f0f9ff;
+            border-color: #bae6fd;
+            color: #075985;
+        }
+
+        .alert-warning {
+            background-color: #fefce8;
+            border-color: #fde68a;
+            color: #854d0e;
+        }
+
+        .alert-danger {
+            background-color: #fef2f2;
+            border-color: #fecaca;
+            color: #991b1b;
+        }
+
+        /* Typography - Mobile Optimized */
+        h1 {
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.875rem;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+
+        h4 {
+            font-size: 1.125rem;
+            margin-bottom: 0.625rem;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--dark-gray);
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .text-muted {
+            color: var(--secondary-color) !important;
+        }
+
+        /* Mobile-First Responsive Design */
+        /* Extra small devices (phones, less than 576px) */
+        @media (max-width: 575.98px) {
+            .container, .container.main-container {
+                padding-left: 1rem;
+                padding-right: 1rem;
+                margin-left: 0.5rem;
+                margin-right: 0.5rem;
+                width: calc(100% - 1rem);
+            }
+            
+            .navbar .container {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+            
+            .navbar-collapse {
+                background-color: white;
+                border-radius: var(--border-radius);
+                border: 1px solid var(--medium-gray);
+                padding: 1rem;
+                margin-top: 0.5rem;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+            
+            .navbar-nav {
+                padding-top: 0;
             }
             
             .nav-link {
-                font-size: 0.85rem;
-                padding: 0.4rem 0.8rem !important;
+                padding: 0.875rem !important;
+                margin: 0.25rem 0;
+                width: 100%;
+            }
+            
+            .dropdown-menu {
+                position: static !important;
+                float: none;
+                width: 100%;
+                border: 1px solid var(--medium-gray);
+                box-shadow: none;
+                margin: 0.5rem 0;
+            }
+            
+            .footer {
+                padding: 1rem 0.5rem;
+            }
+            
+            .footer-links {
+                gap: 0.75rem;
+            }
+            
+            .footer a {
+                padding: 0.25rem;
+                min-height: 36px;
+                line-height: 1.4;
+            }
+            
+            /* Improve touch targets for mobile */
+            input, textarea, select {
+                font-size: 16px !important; /* Prevents iOS zoom on focus */
+                min-height: 44px;
+                padding: 0.75rem !important;
+            }
+        }
+
+        /* Small devices (landscape phones, 576px and up) */
+        @media (min-width: 576px) and (max-width: 767.98px) {
+            .container.main-container {
+                padding: 1.5rem;
+                margin: 1rem auto;
+                max-width: 540px;
+            }
+            
+            .navbar-brand {
+                font-size: 1.25rem;
+            }
+            
+            .footer-links {
+                gap: 1.25rem;
+            }
+        }
+
+        /* Medium devices (tablets, 768px and up) */
+        @media (min-width: 768px) and (max-width: 991.98px) {
+            .container.main-container {
+                padding: 1.75rem;
+                margin: 1.25rem auto;
+                max-width: 720px;
+            }
+            
+            .navbar-nav {
+                gap: 0.25rem;
+            }
+            
+            .nav-link {
+                padding: 0.5rem 0.875rem !important;
+            }
+        }
+
+        /* Large devices (desktops, 992px and up) */
+        @media (min-width: 992px) {
+            .container.main-container {
+                padding: 2rem;
+                margin: 1.5rem auto;
+                max-width: 960px;
+            }
+        }
+
+        /* Extra large devices (large desktops, 1200px and up) */
+        @media (min-width: 1200px) {
+            .container.main-container {
+                max-width: 1140px;
+            }
+        }
+
+        /* Tablet-specific optimizations */
+        @media (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
+            .container.main-container {
+                padding: 1.5rem;
+                margin: 1rem auto;
+            }
+            
+            .card {
+                margin-bottom: 1rem;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        /* Custom utilities for mobile */
+        .touch-target {
+            min-height: 44px;
+            min-width: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .no-scroll {
+            overflow: hidden;
+        }
+
+        .safe-area-padding {
+            padding-left: env(safe-area-inset-left, 0);
+            padding-right: env(safe-area-inset-right, 0);
+        }
+
+        /* Improve form elements on mobile */
+        @media (max-width: 767.98px) {
+            .form-control, .form-select {
+                font-size: 16px !important; /* Prevents iOS zoom */
+                padding: 0.75rem !important;
+            }
+            
+            .form-label {
+                font-weight: 600;
+                margin-bottom: 0.5rem;
+            }
+            
+            /* Better spacing for forms on mobile */
+            .mb-3 {
+                margin-bottom: 1.25rem !important;
+            }
+        }
+
+        /* Prevent horizontal scroll */
+        html, body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        /* Smooth scrolling for mobile */
+        @media (prefers-reduced-motion: no-preference) {
+            html {
+                scroll-behavior: smooth;
             }
         }
 
@@ -147,14 +530,16 @@
 </head>
 
 <body>
-    <!-- Simple Normal Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top safe-area-padding">
         <div class="container">
             <a class="navbar-brand" href="{% url 'home' %}">
-                <i class="bi bi-journal-richtext me-2"></i>TheBlog
+                <i class="bi bi-pencil-square"></i>
+                <span>TheBlog</span>
             </a>
             
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+            <button class="navbar-toggler touch-target" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+                    aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
@@ -163,13 +548,14 @@
                     {% if user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'add_post' %}">
-                            <i class="bi bi-plus-lg me-1"></i>Create Post
+                            <i class="bi bi-plus-lg me-1"></i>New Post
                         </a>
                     </li>
                     
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                            <i class="bi bi-tags me-1"></i>Categories
+                        <a class="nav-link dropdown-toggle touch-target" href="#" role="button" 
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-folder me-1"></i>Categories
                         </a>
                         <ul class="dropdown-menu">
                             {% for category in cat_menu %}
@@ -193,33 +579,17 @@
                 <ul class="navbar-nav ms-auto">
                     {% if user.is_authenticated %}
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                            <i class="bi bi-person-circle me-1"></i>
+                        <a class="nav-link dropdown-toggle d-flex align-items-center touch-target" 
+                           href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle me-2"></i>
                             <span class="user-welcome">{{ user.username }}</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li>
-                                {% if user.profile %}
-    <a class="dropdown-item" href="{% url 'members:edit_profile_page' user.profile.id %}">
-{% else %}
-    <a class="dropdown-item" href="{% url 'members:create_profile' %}">
-{% endif %}
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{% url 'members:edit_settings' %}">
-                                    <i class="bi bi-gear me-2"></i>Settings
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{% url 'members:show_profile' user.profile.id %}">
-                                    <i class="bi bi-person me-2"></i>My Profile
-                                </a>
-                            </li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <form method="POST" action="{% url 'logout' %}" class="d-inline">
                                     {% csrf_token %}
-                                    <button type="submit" class="dropdown-item border-0 bg-transparent">
+                                    <button type="submit" class="btn-logout">
                                         <i class="bi bi-box-arrow-right me-2"></i>Logout
                                     </button>
                                 </form>
@@ -229,7 +599,7 @@
                     {% else %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'members:register' %}">
-                            <i class="bi bi-person-plus me-1"></i>Join Us
+                            <i class="bi bi-person-add me-1"></i>Register
                         </a>
                     </li>
                     <li class="nav-item">
@@ -244,14 +614,21 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="main-content">
-        <div class="container py-4">
+    <main class="main-content fade-in">
+        <div class="container main-container safe-area-padding">
             {% if messages %}
             <div class="messages mb-4">
                 {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show d-flex align-items-center" role="alert">
+                    <i class="bi 
+                        {% if message.tags == 'success' %}bi-check-circle-fill
+                        {% elif message.tags == 'info' %}bi-info-circle-fill
+                        {% elif message.tags == 'warning' %}bi-exclamation-triangle-fill
+                        {% elif message.tags == 'danger' %}bi-exclamation-circle-fill
+                        {% else %}bi-info-circle-fill{% endif %}
+                        me-2 flex-shrink-0"></i>
+                    <div class="flex-grow-1">{{ message }}</div>
+                    <button type="button" class="btn-close ms-2 flex-shrink-0" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
                 {% endfor %}
             </div>
@@ -262,21 +639,21 @@
     </main>
 
     <!-- Footer -->
-    <footer class="footer">
+    <footer class="footer safe-area-padding">
         <div class="container">
             <div class="row align-items-center">
-                <div class="col-md-6 text-center text-md-start">
+                <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
                     <p class="mb-0">
-                        <i class="bi bi-c-circle me-2"></i>2023 TheBlog
+                        <i class="bi bi-heart-fill text-danger me-1"></i> 
+                        TheBlog · Share your stories
                     </p>
                 </div>
-                <div class="col-md-6">
-                    <div class="footer-links justify-content-md-end text-center text-md-end">
-                        <a href="{% url 'home' %}">Home</a>
-                        <a href="#">About</a>
-                        <a href="#">Contact</a>
-                        <a href="#">Privacy</a>
-                        <a href="#">Terms</a>
+                <div class="col-md-6 mt-2 mt-md-0">
+                    <div class="footer-links justify-content-center justify-content-md-end">
+                        <a href="{% url 'home' %}" class="touch-target">Home</a>
+                        <a href="#" class="touch-target">About</a>
+                        <a href="#" class="touch-target">Contact</a>
+                        <a href="#" class="touch-target">Privacy</a>
                     </div>
                 </div>
             </div>
@@ -287,8 +664,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // Add active class to current page
+        // Mobile-specific optimizations
         document.addEventListener('DOMContentLoaded', function() {
+            // Add active class to current page
             const currentUrl = window.location.pathname;
             const navLinks = document.querySelectorAll('.nav-link:not(.dropdown-toggle)');
             
@@ -296,6 +674,90 @@
                 if (link.getAttribute('href') === currentUrl) {
                     link.classList.add('active');
                 }
+            });
+            
+            // Handle mobile menu behavior
+            const navbarToggler = document.querySelector('.navbar-toggler');
+            const navbarContent = document.getElementById('navbarContent');
+            
+            if (navbarToggler && navbarContent) {
+                // Close mobile menu when clicking outside
+                document.addEventListener('click', function(event) {
+                    const isClickInsideNavbar = navbarContent.contains(event.target) || 
+                                                navbarToggler.contains(event.target);
+                    
+                    if (!isClickInsideNavbar && navbarContent.classList.contains('show')) {
+                        navbarToggler.click();
+                    }
+                });
+                
+                // Close dropdowns when clicking another dropdown toggle on mobile
+                if (window.innerWidth < 768) {
+                    const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+                    dropdownToggles.forEach(toggle => {
+                        toggle.addEventListener('click', function(e) {
+                            const isOpen = this.parentElement.classList.contains('show');
+                            
+                            // Close all other dropdowns
+                            dropdownToggles.forEach(otherToggle => {
+                                if (otherToggle !== this) {
+                                    const otherParent = otherToggle.parentElement;
+                                    if (otherParent.classList.contains('show')) {
+                                        otherParent.classList.remove('show');
+                                        const otherMenu = otherToggle.nextElementSibling;
+                                        if (otherMenu) {
+                                            otherMenu.classList.remove('show');
+                                        }
+                                    }
+                                }
+                            });
+                            
+                            // If this dropdown was already open, close it
+                            if (isOpen) {
+                                e.preventDefault();
+                                this.parentElement.classList.remove('show');
+                                const menu = this.nextElementSibling;
+                                if (menu) {
+                                    menu.classList.remove('show');
+                                }
+                            }
+                        });
+                    });
+                }
+            }
+            
+            // Prevent body scroll when mobile menu is open
+            navbarContent.addEventListener('show.bs.collapse', function () {
+                document.body.classList.add('no-scroll');
+            });
+            
+            navbarContent.addEventListener('hide.bs.collapse', function () {
+                document.body.classList.remove('no-scroll');
+            });
+            
+            // Fix iOS viewport height issue
+            function setVH() {
+                const vh = window.innerHeight * 0.01;
+                document.documentElement.style.setProperty('--vh', `${vh}px`);
+            }
+            
+            setVH();
+            window.addEventListener('resize', setVH);
+            window.addEventListener('orientationchange', setVH);
+            
+            // Improve touch experience
+            document.body.classList.add('loaded');
+        });
+
+        // Simple fade-in animation
+        document.addEventListener('DOMContentLoaded', () => {
+            const elements = document.querySelectorAll('.fade-in');
+            elements.forEach(el => {
+                el.style.opacity = '0';
+                setTimeout(() => {
+                    el.style.transition = 'opacity 0.3s ease';
+                    el.style.opacity = '1';
+                }, 100);
             });
         });
     </script>
