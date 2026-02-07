@@ -38,7 +38,7 @@
                     <div class="d-flex align-items-center">
                         <!-- Author Avatar -->
                         <div class="author-avatar me-3">
-                            {% if post.auther.profile.profile_pic %}
+                            {% if post.auther.profile and post.auther.profile.profile_pic %}
                             <img src="{{ post.auther.profile.profile_pic.url }}" class="rounded-circle" 
                                  alt="{{ post.auther.username }}">
                             {% else %}
@@ -53,17 +53,15 @@
                             <div class="d-flex align-items-center flex-wrap">
                                 <h6 class="author-name mb-0 me-2">
                                     {% if post.auther.profile and post.auther.profile.id %}
-    <a href="{% url 'members:show_profile' post.auther.profile.id %}" 
-       class="text-decoration-none text-dark">
-        {{ post.auther.get_full_name|default:post.auther.username }}
-    </a>
-{% else %}
-    <!-- Link to user's post list or just show name without link -->
-    <span class="text-dark">
-        {{ post.auther.get_full_name|default:post.auther.username }}
-    </span>
-{% endif %}
-
+                                    <a href="{% url 'members:show_profile' post.auther.profile.id %}" 
+                                       class="text-decoration-none text-dark">
+                                        {{ post.auther.get_full_name|default:post.auther.username }}
+                                    </a>
+                                    {% else %}
+                                    <span class="text-dark">
+                                        {{ post.auther.get_full_name|default:post.auther.username }}
+                                    </span>
+                                    {% endif %}
                                 </h6>
                                 <small class="text-muted me-2">@{{ post.auther.username }}</small>
                                 <span class="text-muted">•</span>
@@ -149,7 +147,7 @@
                 <!-- Author Avatar -->
                 <div class="col-md-3 text-center mb-3 mb-md-0">
                     <div class="profile-avatar-container">
-                        {% if post.auther.profile.profile_pic %}
+                        {% if post.auther.profile and post.auther.profile.profile_pic %}
                         <img src="{{ post.auther.profile.profile_pic.url }}" 
                              class="profile-avatar" 
                              alt="{{ post.auther }}'s profile picture">
@@ -165,14 +163,20 @@
                 <div class="col-md-9">
                     <div class="author-details">
                         <h4 class="author-name mb-2">
+                            {% if post.auther.profile and post.auther.profile.id %}
                             <a href="{% url 'members:show_profile' post.auther.profile.id %}" class="text-decoration-none">
                                 {{ post.auther.get_full_name|default:post.auther.username }}
                             </a>
+                            {% else %}
+                            <span class="text-dark">
+                                {{ post.auther.get_full_name|default:post.auther.username }}
+                            </span>
+                            {% endif %}
                         </h4>
                         <small class="text-muted d-block mb-3">@{{ post.auther.username }}</small>
                         
                         <!-- Bio -->
-                        {% if post.auther.profile.bio %}
+                        {% if post.auther.profile and post.auther.profile.bio %}
                         <p class="author-bio text-muted mb-3">
                             {{ post.auther.profile.bio }}
                         </p>
@@ -181,11 +185,13 @@
                         <!-- Social Links & Actions -->
                         <div class="author-actions">
                             <div class="d-flex flex-wrap align-items-center gap-3">
+                                {% if post.auther.profile and post.auther.profile.id %}
                                 <a href="{% url 'members:show_profile' post.auther.profile.id %}" class="btn btn-outline-primary btn-sm">
                                     <i class="bi bi-person me-1"></i>View Profile
                                 </a>
+                                {% endif %}
                                 
-                                {% if post.auther.profile.website_url or post.auther.profile.facebook_url or post.auther.profile.twitter_url or post.auther.profile.instagram_url %}
+                                {% if post.auther.profile %}
                                 <div class="social-links">
                                     {% if post.auther.profile.website_url %}
                                     <a href="{{ post.auther.profile.website_url }}" target="_blank" class="social-link" title="Website">
@@ -224,16 +230,24 @@
     <div class="mt-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h5 class="mb-0">More from this author</h5>
+            {% if post.auther.profile and post.auther.profile.id %}
             <a href="{% url 'members:show_profile' post.auther.profile.id %}" class="btn btn-outline-primary btn-sm">
                 View All Stories
             </a>
+            {% endif %}
         </div>
         <!-- You can add recent posts by same author here -->
         <div class="text-center py-4">
             <p class="text-muted">Explore more stories by {{ post.auther.username }}</p>
+            {% if post.auther.profile and post.auther.profile.id %}
             <a href="{% url 'members:show_profile' post.auther.profile.id %}" class="btn btn-primary">
                 Visit Author Profile
             </a>
+            {% else %}
+            <span class="btn btn-secondary" style="cursor: default;">
+                Profile Not Available
+            </span>
+            {% endif %}
         </div>
     </div>
 </div>
