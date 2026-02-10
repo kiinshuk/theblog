@@ -84,7 +84,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'ablog.wsgi.application'
 
 
-# Database
+# Database - FIXED VERSION
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -92,10 +92,14 @@ DATABASES = {
     }
 }
 
-# For Render PostgreSQL
+# For Render PostgreSQL - FIXED
 if 'DATABASE_URL' in os.environ:
     import dj_database_url
-    DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
+    # Don't use ssl_require=True parameter
+    DATABASES['default'] = dj_database_url.config(
+        conn_max_age=600,
+        conn_health_checks=True
+    )
 
 
 # Password validation
