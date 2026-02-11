@@ -5,3 +5,4 @@ dj-database-url==2.1.0
 psycopg-binary==3.3.2
 Pillow==11.0.0
 django-ckeditor==6.7.2
+mysqlclient==2.2.4 
